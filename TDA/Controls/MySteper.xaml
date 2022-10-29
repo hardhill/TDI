@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="TDA.Controls.MySteper">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <Button Text="-" Grid.Column="0" Grid.RowSpan="2" HeightRequest="40" WidthRequest="40" BackgroundColor="#0062BF"/>
+        <Label Grid.Column="1" Text="15 min" VerticalOptions="Center" HorizontalOptions="CenterAndExpand"/>
+        <Button Text="+" Grid.Column="2" Grid.RowSpan="2" HeightRequest="40" WidthRequest="40" BackgroundColor="#00CC99"/>
+        <Slider Grid.Row="1" Grid.Column="1" Margin="10,0" Minimum="5" Maximum="60" Value="15"/>
+    </Grid>
+</ContentView>
