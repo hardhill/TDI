@@ -20,10 +20,14 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <Label Margin="0,20,0,10" Text="Продолжительность занятия, мин." 
+        <Label Margin="0,20,0,10" Text="Дыхательных циклов" 
                HorizontalOptions="Center"
                FontSize="Medium"/>
-        <control:MySteper HeightRequest="40" Margin="20,20" Grid.Row="1" Minimum="{Binding MinCycles}" Maximum="{Binding MaxCycles}" Value="{Binding Cycles}"/>
+        <control:MySteper HeightRequest="40" Margin="20,20" Grid.Row="1" 
+                          IsEnabled="False"
+                          Minimum="{Binding MinCycles}" 
+                          Maximum="{Binding MaxCycles}" 
+                          Value="{Binding Cycles}"/>
         <Label Grid.Row="2" 
                Text="Вдох, сек." 
                HorizontalOptions="CenterAndExpand"
@@ -43,8 +47,8 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <Label Text="{Binding RemainedTime, Converter={StaticResource SecundaConverter}}" FontSize="32" VerticalOptions="Center" Margin="30,5" FontAttributes="Bold"/>
-            <Button Grid.Column="1" Text="Start" Margin="10,0"/>
-            <Button Grid.Column="2" Text="Stop" Margin="10,0" BackgroundColor="OrangeRed"/>
+            <Button Grid.Column="1" Text="Start" Margin="10,0" Command="{Binding StartBreathCommand}"/>
+            <Button Grid.Column="2" Text="Stop" Margin="10,0" BackgroundColor="OrangeRed" Command="{Binding ResetBreathCommand}"/>
         </Grid>
     </Grid>
 
