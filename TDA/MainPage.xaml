@@ -3,17 +3,49 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="TDA.MainPage"
              xmlns:control="clr-namespace:TDA.Controls"
+             xmlns:vm="clr-namespace:TDA.ViewModels"
+             
+             x:DataType="vm:MainViewModel"
              Title="Тренажер ТДИ">
-
+    <ContentPage.Resources>
+        <vm:SecundaConverter x:Key="SecundaConverter"/>
+    </ContentPage.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <Label Margin="0,20,0,10" Text="Продолжительность занятий" 
+        <Label Margin="0,20,0,10" Text="Продолжительность занятия, мин." 
                HorizontalOptions="Center"
                FontSize="Medium"/>
-        <control:MySteper HeightRequest="40" Margin="20,20" Grid.Row="1"/>
+        <control:MySteper HeightRequest="40" Margin="20,20" Grid.Row="1" Minimum="{Binding MinCycles}" Maximum="{Binding MaxCycles}" Value="{Binding Cycles}"/>
+        <Label Grid.Row="2" 
+               Text="Вдох, сек." 
+               HorizontalOptions="CenterAndExpand"
+               Margin="20,20,20,0"
+               FontSize="Medium"/>
+        <control:MySteper HeightRequest="40" Margin="20,20" Grid.Row="3" Minimum="{Binding MinBreathSec}" Maximum="{Binding MaxBreathSec}" Value="{Binding BreathSec}" />
+        <Label Grid.Row="4" 
+               Text="Выдох, сек." 
+               HorizontalOptions="CenterAndExpand"
+               Margin="20,20,20,0"
+               FontSize="Medium"/>
+        <control:MySteper HeightRequest="40" Margin="20,20" Grid.Row="5" Minimum="{Binding MinExhaleSec}" Maximum="{Binding MaxExhaleSec}" Value="{Binding ExhaleSec}"/>
+        <Grid Grid.Row="6" HorizontalOptions="Center" Margin="0,20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Label Text="{Binding RemainedTime, Converter={StaticResource SecundaConverter}}" FontSize="32" VerticalOptions="Center" Margin="30,5" FontAttributes="Bold"/>
+            <Button Grid.Column="1" Text="Start" Margin="10,0"/>
+            <Button Grid.Column="2" Text="Stop" Margin="10,0" BackgroundColor="OrangeRed"/>
+        </Grid>
     </Grid>
 
 </ContentPage>

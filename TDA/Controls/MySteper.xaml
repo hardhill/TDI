@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Name="this"
              x:Class="TDA.Controls.MySteper">
     <Grid>
         <Grid.RowDefinitions>
@@ -12,9 +13,15 @@
             <ColumnDefinition/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
-        <Button Text="-" Grid.Column="0" Grid.RowSpan="2" HeightRequest="40" WidthRequest="40" BackgroundColor="#0062BF"/>
-        <Label Grid.Column="1" Text="15 min" VerticalOptions="Center" HorizontalOptions="CenterAndExpand"/>
-        <Button Text="+" Grid.Column="2" Grid.RowSpan="2" HeightRequest="40" WidthRequest="40" BackgroundColor="#00CC99"/>
-        <Slider Grid.Row="1" Grid.Column="1" Margin="10,0" Minimum="5" Maximum="60" Value="15"/>
+        <Button Text="-" Grid.Column="0" Grid.RowSpan="2" HeightRequest="40" WidthRequest="40" BackgroundColor="#0062BF" Clicked="ButtonMinus_Clicked"/>
+        <Label Grid.Column="1" Text="{Binding Source={x:Reference this}, Path=Value}" VerticalOptions="Center" HorizontalOptions="CenterAndExpand"/>
+        <Button Text="+" Grid.Column="2" Grid.RowSpan="2" HeightRequest="40" WidthRequest="40" BackgroundColor="#00CC99" Clicked="ButtonPlus_Clicked"/>
+        <Slider Grid.Row="1" Grid.Column="1" Margin="10,0" 
+                ThumbColor="OrangeRed"
+                MinimumTrackColor="#0062BF"
+                MaximumTrackColor="#00CC99"
+                Minimum="{Binding Source={x:Reference this}, Path=Minimum}" 
+                Maximum="{Binding Source={x:Reference this}, Path=Maximum}" 
+                Value="{Binding Source={x:Reference this}, Path=Value, Mode=TwoWay}"/>
     </Grid>
 </ContentView>
