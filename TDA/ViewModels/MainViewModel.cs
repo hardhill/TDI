@@ -10,29 +10,38 @@ using System.Threading.Tasks;
 
 namespace TDA.ViewModels
 {
-    
-    public partial class MainViewModel: INotifyPropertyChanged
+
+    public partial class MainViewModel : INotifyPropertyChanged
     {
         private int _remainedTime;
         private TimeOnly _timer;
-        private bool isRunning ;
+        private bool isRunning;
+        private int storeCycles;
+        private int storeBreath;
+        private int storeExhale;
+        private bool willBeSaved;
 
 
 
         public MainViewModel()
         {
-            MinCycles = 10;
+            MinCycles = 1;
             Cycles = 20;
             MaxCycles = 200;
+
             MinBreathSec = 1;
             BreathSec = 3;
             MaxBreathSec = 6;
-            MinExhaleSec = 10;
+            
+            MinExhaleSec = 5;
             MaxExhaleSec = 180;
-            _timer = new TimeOnly();    
+            ExhaleSec = 10;
+            IsRunning = false;
+            willBeSaved = false;
+            _timer = new TimeOnly();
         }
 
-        
+
         private int cycles;
         private int minCycles;
         private int maxCycles;
@@ -76,32 +85,56 @@ namespace TDA.ViewModels
         public int Cycles
         {
             get { return cycles; }
-            set { cycles = value;
+            set
+            {
+                cycles = value;
                 SetRemainedTime();
-                OnPropertyChanged(nameof(Cycles)); }
+                OnPropertyChanged(nameof(Cycles));
+            }
         }
 
         public int BreathSec
         {
             get { return breathSec; }
-            set { breathSec = value;
+            set
+            {
+                breathSec = value;
                 SetRemainedTime();
-                OnPropertyChanged(nameof(BreathSec)); }
+                OnPropertyChanged(nameof(BreathSec));
+            }
         }
 
         public int ExhaleSec
         {
             get { return exhaleSec; }
-            set { exhaleSec = value;
+            set
+            {
+                exhaleSec = value;
                 SetRemainedTime();
-                OnPropertyChanged(nameof(ExhaleSec)); }
+                OnPropertyChanged(nameof(ExhaleSec));
+            }
         }
 
         public int RemainedTime
         {
             get { return _remainedTime; }
-            set { _remainedTime = value;
-                OnPropertyChanged(nameof(RemainedTime)); }
+            set
+            {
+                _remainedTime = value;
+                OnPropertyChanged(nameof(RemainedTime));
+            }
+        }
+
+
+        public bool IsRunning
+        {
+            get { return isRunning; }
+            set
+            {
+                isRunning = value;
+                OnPropertyChanged(nameof(IsRunning));
+            }
+
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -114,26 +147,65 @@ namespace TDA.ViewModels
         private void SetRemainedTime()
         {
             RemainedTime = cycles * (breathSec + exhaleSec);
+            
         }
-        
+        private void ResetTimer()
+        {
+            Cycles = storeCycles;
+            BreathSec = storeBreath;
+            ExhaleSec = storeExhale;
+            willBeSaved = false;
+        }
 
+        // start breath
         [RelayCommand]
         public async void StartBreath()
         {
-            isRunning = !isRunning;
-            while (isRunning)
+            if (!willBeSaved)
             {
+                storeCycles = Cycles;
+                storeBreath = BreathSec;
+                storeExhale = ExhaleSec;
+                willBeSaved=true;
+            }
+            IsRunning = !IsRunning;
+            if (!IsRunning)
+            {
+               int fullCycles = RemainedTime / (BreathSec + ExhaleSec);
+               int leftOver = RemainedTime - fullCycles;
+                if(leftOver > (BreathSec + ExhaleSec) / 2.0)
+                {
+                    RemainedTime = (fullCycles + 1) * (BreathSec + ExhaleSec);
+                    Cycles = fullCycles + 1;
+                }
+                else
+                {
+                    RemainedTime = (fullCycles) * (BreathSec + ExhaleSec);
+                    Cycles = fullCycles;
+                }
+                
+            }
+            else
+            {
+                await Task.Delay(TimeSpan.FromSeconds(1));
+            }
+            
+            while (IsRunning)
+            {
+                
                 _timer.Add(TimeSpan.FromSeconds(1));
                 CountDown();
                 await Task.Delay(TimeSpan.FromSeconds(1));
+
             }
+            
         }
 
         [RelayCommand]
         public void ResetBreath()
         {
             _timer = new TimeOnly();
-            
+            ResetTimer();
         }
 
         private void CountDown()
@@ -145,7 +217,7 @@ namespace TDA.ViewModels
             }
             else
             {
-
+                IsRunning = false;
             }
         }
     }

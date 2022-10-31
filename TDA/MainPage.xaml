@@ -9,6 +9,8 @@
              Title="Тренажер ТДИ">
     <ContentPage.Resources>
         <vm:SecundaConverter x:Key="SecundaConverter"/>
+        <vm:BoolInversConverter x:Key="BoolInversConverter"/>
+        <vm:SourceButtonConverter x:Key="SourceButtonConverter"/>
     </ContentPage.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -19,12 +21,13 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Label Margin="0,20,0,10" Text="Дыхательных циклов" 
                HorizontalOptions="Center"
                FontSize="Medium"/>
         <control:MySteper HeightRequest="40" Margin="20,20" Grid.Row="1" 
-                          IsEnabled="False"
+                          IsEnabled="{Binding IsRunning, Converter={x:StaticResource BoolInversConverter}}"
                           Minimum="{Binding MinCycles}" 
                           Maximum="{Binding MaxCycles}" 
                           Value="{Binding Cycles}"/>
@@ -33,22 +36,46 @@
                HorizontalOptions="CenterAndExpand"
                Margin="20,20,20,0"
                FontSize="Medium"/>
-        <control:MySteper HeightRequest="40" Margin="20,20" Grid.Row="3" Minimum="{Binding MinBreathSec}" Maximum="{Binding MaxBreathSec}" Value="{Binding BreathSec}" />
+        <control:MySteper HeightRequest="40" Margin="20,20" Grid.Row="3" 
+                          IsEnabled="{Binding IsRunning, Converter={x:StaticResource BoolInversConverter}}"
+                          Minimum="{Binding MinBreathSec}" 
+                          Maximum="{Binding MaxBreathSec}" 
+                          Value="{Binding BreathSec}" />
         <Label Grid.Row="4" 
                Text="Выдох, сек." 
                HorizontalOptions="CenterAndExpand"
                Margin="20,20,20,0"
                FontSize="Medium"/>
-        <control:MySteper HeightRequest="40" Margin="20,20" Grid.Row="5" Minimum="{Binding MinExhaleSec}" Maximum="{Binding MaxExhaleSec}" Value="{Binding ExhaleSec}"/>
+        <control:MySteper HeightRequest="40" Margin="20,20" Grid.Row="5" 
+                          IsEnabled="{Binding IsRunning, Converter={x:StaticResource BoolInversConverter}}"
+                          Minimum="{Binding MinExhaleSec}" Maximum="{Binding MaxExhaleSec}" Value="{Binding ExhaleSec}"/>
         <Grid Grid.Row="6" HorizontalOptions="Center" Margin="0,20">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <Label Text="{Binding RemainedTime, Converter={StaticResource SecundaConverter}}" FontSize="32" VerticalOptions="Center" Margin="30,5" FontAttributes="Bold"/>
-            <Button Grid.Column="1" Text="Start" Margin="10,0" Command="{Binding StartBreathCommand}"/>
-            <Button Grid.Column="2" Text="Stop" Margin="10,0" BackgroundColor="OrangeRed" Command="{Binding ResetBreathCommand}"/>
+            <Label Text="{Binding RemainedTime, Converter={x:StaticResource SecundaConverter}}" FontSize="32" VerticalOptions="Center" Margin="30,5" FontAttributes="Bold"/>
+            <ImageButton Grid.Column="1" Source="{Binding IsRunning, Converter={x:StaticResource SourceButtonConverter}}"
+                         WidthRequest="60"
+                         HeightRequest="50"
+                         Margin="10,0" 
+                         Command="{Binding StartBreathCommand}" 
+                         BackgroundColor="Lavender" Padding="5"/>
+            <ImageButton Grid.Column="2" Source="reset" 
+                         WidthRequest="60"
+                         HeightRequest="50"
+                         Margin="10,0" BackgroundColor="#00CC99" Command="{Binding ResetBreathCommand}"
+                         Padding="5"
+                         />
+        </Grid>
+        <Grid Grid.Row="7">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <control:MyPump Grid.Column="1"/>
         </Grid>
     </Grid>
 

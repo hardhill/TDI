@@ -31,7 +31,13 @@ public partial class MySteper : ContentView
         defaultBindingMode: BindingMode.TwoWay,
         declaringType: typeof(MySteper)
         );
-
+    public static new readonly BindableProperty IsEnabledProperty = BindableProperty.Create(
+        propertyName: nameof(IsEnabled),
+        returnType: typeof(bool),
+        defaultValue: true,
+        defaultBindingMode: BindingMode.OneWay,
+        declaringType: typeof(MySteper)
+        );
     //public static readonly BindableProperty TextProperty = BindableProperty.Create(
     //    propertyName: nameof(Text),
     //    returnType: typeof(string),
@@ -60,7 +66,11 @@ public partial class MySteper : ContentView
     //    get { return (string)GetValue(TextProperty); }
     //    set { SetValue(TextProperty, value); }
     //}
-
+    public new bool IsEnabled
+    {
+        get { return (bool)GetValue(IsEnabledProperty); }
+        set { SetValue(IsEnabledProperty, value); }
+    }
     private void ButtonPlus_Clicked(object sender, EventArgs e)
     {
         if (Value < Maximum)

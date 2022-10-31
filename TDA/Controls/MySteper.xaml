@@ -13,10 +13,15 @@
             <ColumnDefinition/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
-        <Button Text="-" Grid.Column="0" Grid.RowSpan="2" HeightRequest="40" WidthRequest="40" BackgroundColor="#0062BF" Clicked="ButtonMinus_Clicked"/>
+        <Button Text="-" Grid.Column="0" Grid.RowSpan="2" HeightRequest="40" WidthRequest="40" 
+                IsEnabled="{Binding Source={x:Reference this}, Path=IsEnabled }"
+                BackgroundColor="#0062BF" Clicked="ButtonMinus_Clicked"/>
         <Label Grid.Column="1" Text="{Binding Source={x:Reference this}, Path=Value}" VerticalOptions="Center" HorizontalOptions="CenterAndExpand"/>
-        <Button Text="+" Grid.Column="2" Grid.RowSpan="2" HeightRequest="40" WidthRequest="40" BackgroundColor="#00CC99" Clicked="ButtonPlus_Clicked"/>
+        <Button Text="+" Grid.Column="2" Grid.RowSpan="2" HeightRequest="40" WidthRequest="40" 
+                IsEnabled="{Binding Source={x:Reference this}, Path=IsEnabled }"
+                BackgroundColor="#00CC99" Clicked="ButtonPlus_Clicked"/>
         <Slider Grid.Row="1" Grid.Column="1" Margin="10,0" 
+                IsEnabled="{Binding Source={x:Reference this}, Path=IsEnabled}"
                 ThumbColor="OrangeRed"
                 MinimumTrackColor="#0062BF"
                 MaximumTrackColor="#00CC99"
