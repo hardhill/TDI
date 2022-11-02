@@ -1,4 +1,10 @@
-﻿namespace TDA;
+﻿
+
+using Microsoft.Extensions.DependencyInjection;
+using Plugin.Maui.Audio;
+using TDA.ViewModels;
+
+namespace TDA;
 
 public static class MauiProgram
 {
@@ -7,12 +13,15 @@ public static class MauiProgram
 		var builder = MauiApp.CreateBuilder();
 		builder
 			.UseMauiApp<App>()
-			.ConfigureFonts(fonts =>
+            
+            .ConfigureFonts(fonts =>
 			{
 				fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
 				fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
 			});
+        builder.Services.AddSingleton(AudioManager.Current);
+		builder.Services.AddTransient<MainPage>();
 
-		return builder.Build();
+        return builder.Build();
 	}
 }

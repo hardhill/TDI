@@ -5,7 +5,7 @@
              x:Class="TDA.Controls.MySteper">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition/>
+            <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -16,7 +16,7 @@
         <Button Text="-" Grid.Column="0" Grid.RowSpan="2" HeightRequest="40" WidthRequest="40" 
                 IsEnabled="{Binding Source={x:Reference this}, Path=IsEnabled }"
                 BackgroundColor="#0062BF" Clicked="ButtonMinus_Clicked"/>
-        <Label Grid.Column="1" Text="{Binding Source={x:Reference this}, Path=Value}" VerticalOptions="Center" HorizontalOptions="CenterAndExpand"/>
+        <Label Grid.Row="0" Grid.Column="1" Text="{Binding Source={x:Reference this}, Path=Value}" VerticalOptions="Center" HorizontalOptions="CenterAndExpand"/>
         <Button Text="+" Grid.Column="2" Grid.RowSpan="2" HeightRequest="40" WidthRequest="40" 
                 IsEnabled="{Binding Source={x:Reference this}, Path=IsEnabled }"
                 BackgroundColor="#00CC99" Clicked="ButtonPlus_Clicked"/>

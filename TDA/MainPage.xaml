@@ -71,11 +71,12 @@
         </Grid>
         <Grid Grid.Row="7">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
                 <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <control:MyPump Grid.Column="1"/>
+            <Ellipse Grid.Column="1" WidthRequest="200" HeightRequest="200" Stroke="Black" StrokeThickness="2" Fill="#78E258"/>
+            <Ellipse Grid.Column="1" WidthRequest="100" HeightRequest="100" Stroke="Black" StrokeThickness="2" Fill="#2DFCFC"/>
         </Grid>
     </Grid>
 

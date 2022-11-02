@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Plugin.Maui.Audio;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -21,10 +22,21 @@ namespace TDA.ViewModels
         private int storeExhale;
         private bool willBeSaved;
 
+        private int cycles;
+        private int minCycles;
+        private int maxCycles;
+        private int breathSec;
+        private int minBreathSec;
+        private int maxBreathSec;
+        private int exhaleSec;
+        private int minExhaleSec;
+        private int maxExhaleSec;
+        private readonly IAudioManager audioManager;
 
 
-        public MainViewModel()
+        public MainViewModel(IAudioManager audioManager)
         {
+            this.audioManager = audioManager;
             MinCycles = 1;
             Cycles = 20;
             MaxCycles = 200;
@@ -42,15 +54,7 @@ namespace TDA.ViewModels
         }
 
 
-        private int cycles;
-        private int minCycles;
-        private int maxCycles;
-        private int breathSec;
-        private int minBreathSec;
-        private int maxBreathSec;
-        private int exhaleSec;
-        private int minExhaleSec;
-        private int maxExhaleSec;
+        
 
         public int MinCycles
         {
@@ -183,11 +187,14 @@ namespace TDA.ViewModels
                     RemainedTime = (fullCycles) * (BreathSec + ExhaleSec);
                     Cycles = fullCycles;
                 }
-                
+               
             }
             else
             {
-                await Task.Delay(TimeSpan.FromSeconds(1));
+               var player = audioManager.CreatePlayer(await FileSystem.OpenAppPackageFileAsync("tibip.wav"));
+               player.Play();
+               await Task.Delay(TimeSpan.FromSeconds(1));
+                // нажал кабан на баклажан
             }
             
             while (IsRunning)

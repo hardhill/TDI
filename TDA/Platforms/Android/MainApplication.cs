@@ -1,5 +1,8 @@
 ﻿using Android.App;
+using Android.Content;
+using Android.OS;
 using Android.Runtime;
+
 
 namespace TDA;
 
@@ -11,5 +14,9 @@ public class MainApplication : MauiApplication
 	{
 	}
 
-	protected override MauiApp CreateMauiApp() => MauiProgram.CreateMauiApp();
+
+    protected override MauiApp CreateMauiApp()=> MauiProgram.CreateMauiApp(); 
+    
+
+    
 }
