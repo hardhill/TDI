@@ -1,5 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Maui.Controls;
+using Microsoft.Maui.Controls.Shapes;
 using Plugin.Maui.Audio;
 using System;
 using System.Collections.Generic;
@@ -32,13 +34,14 @@ namespace TDA.ViewModels
         private int minExhaleSec;
         private int maxExhaleSec;
         private readonly IAudioManager audioManager;
+        private Ellipse myEllipse;
 
         private int secondsOfBreath;
         private int secondsOfExhale;
-        private BreathParam breathParam;
 
 
-        public MainViewModel(IAudioManager audioManager)
+
+        public MainViewModel(IAudioManager audioManager, Ellipse ellipse)
         {
             this.audioManager = audioManager;
             MinCycles = 1;
@@ -55,9 +58,7 @@ namespace TDA.ViewModels
             IsRunning = false;
             willBeSaved = false;
             _timer = new TimeOnly();
-            breathParam = new BreathParam();
-            breathParam.BreathSec = BreathSec;
-            breathParam.ExhaleSec = ExhaleSec;
+            myEllipse = ellipse;
         }
 
 
@@ -145,12 +146,6 @@ namespace TDA.ViewModels
             get => secondsOfExhale;
         }
 
-        public BreathParam BreathParam
-        {
-            get { return breathParam; }
-            set { breathParam = value; OnPropertyChanged(nameof(BreathParam)); }
-        }
-
         public bool IsRunning
         {
             get { return isRunning; }
@@ -230,11 +225,9 @@ namespace TDA.ViewModels
                 }
                 while (IsRunning)
                 {
-
                     _timer.Add(TimeSpan.FromSeconds(1));
                     CountDown(startBreathAudio, startExhaleAudio);
                     await Task.Delay(TimeSpan.FromMilliseconds(1000));
-
                 }
             }
             finally
@@ -243,10 +236,6 @@ namespace TDA.ViewModels
                 startBreathAudio.Dispose();
                 startExhaleAudio.Dispose();
             }
-            
-            
-            
-            
         }
 
         [RelayCommand]
@@ -260,15 +249,17 @@ namespace TDA.ViewModels
         {
             if (_remainedTime > 0)
             {
-                int leftOver = _remainedTime % (BreathSec + ExhaleSec);
+                int leftOver = RemainedTime % (BreathSec + ExhaleSec);
                 
                 if(leftOver == 0)
                 {
                     // play start begin breath
+                    Cycles = (RemainedTime / (BreathSec + ExhaleSec));
+                    myEllipse.ScaleTo(1d, (uint)BreathSec * 1000);
                     startBreathAudio?.Play();
+                    
                 }
                 int secondsOfCycle = (BreathSec + ExhaleSec) - leftOver;
-                BreathParam.StadiaSec = secondsOfCycle;
                 if (secondsOfCycle > BreathSec)
                 {
                     // exhale stadia
@@ -284,17 +275,22 @@ namespace TDA.ViewModels
                 if(secondsOfBreath == BreathSec && secondsOfExhale == 0)
                 {
                     //play start exhale
+                    myEllipse.ScaleTo(0.1, (uint)ExhaleSec * 1000);
                     startExhaleAudio?.Play();
+                    
                 }
                 OnPropertyChanged(nameof(SecondsOfBreath));
                 OnPropertyChanged(nameof(SecondsOfExhale));
-                OnPropertyChanged(nameof(BreathParam));
+                //OnPropertyChanged(nameof(BreathParam));
                 _remainedTime--;
                 OnPropertyChanged(nameof(RemainedTime));
             }
             else
             {
+                // упражнение завершено
                 IsRunning = false;
+                ResetTimer();
+
             }
         }
     }

@@ -4,14 +4,12 @@
              x:Class="TDA.MainPage"
              xmlns:control="clr-namespace:TDA.Controls"
              xmlns:vm="clr-namespace:TDA.ViewModels"
-             
              x:DataType="vm:MainViewModel"
-             Title="Тренажер ТДИ">
+             Title="Таймер для ТДИ-1">
     <ContentPage.Resources>
         <vm:SecundaConverter x:Key="SecundaConverter"/>
         <vm:BoolInversConverter x:Key="BoolInversConverter"/>
         <vm:SourceButtonConverter x:Key="SourceButtonConverter"/>
-        <vm:SecundaSizeConverter x:Key="Seconda2Size"/>
     </ContentPage.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -76,8 +74,24 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <Ellipse Grid.Column="1" WidthRequest="200" HeightRequest="200" Stroke="Black" StrokeThickness="2" Fill="#78E258"/>
-            <Ellipse Grid.Column="1" WidthRequest="{Binding BreathParam, Converter={StaticResource Seconda2Size}, ConverterParameter=200}" HeightRequest="{Binding BreathParam, Converter={StaticResource Seconda2Size },ConverterParameter=200}" Stroke="Black" StrokeThickness="2" Fill="#2DFCFC"/>
+            <Ellipse Grid.Column="1" WidthRequest="200" HeightRequest="200" Stroke="Black" StrokeThickness="2" Fill="#78E258">
+                
+            </Ellipse>
+            <!--
+            <Ellipse Grid.Column="1" 
+                     WidthRequest="{Binding BreathParam, Converter={StaticResource Seconda2Size}, ConverterParameter=200}" 
+                     HeightRequest="{Binding BreathParam, Converter={StaticResource Seconda2Size }, ConverterParameter=200}" 
+                     Stroke="Black" StrokeThickness="2" Fill="#2DFCFC"
+                     >
+            </Ellipse>
+            -->
+            <Ellipse x:Name="myEllipse" Grid.Column="1" 
+                     WidthRequest="200" 
+                     HeightRequest="200" 
+                     Fill="#2DFCFC"
+                     Scale="0.1"
+                     >
+            </Ellipse>
         </Grid>
     </Grid>
 

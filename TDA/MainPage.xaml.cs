@@ -10,7 +10,8 @@ public partial class MainPage : ContentPage
 	public MainPage(IAudioManager audioManager)
 	{
 		InitializeComponent();
-		BindingContext = new MainViewModel(audioManager);
+		BindingContext = new MainViewModel(audioManager, myEllipse);
+		
 	}
 
 	
