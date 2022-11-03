@@ -33,6 +33,10 @@ namespace TDA.ViewModels
         private int maxExhaleSec;
         private readonly IAudioManager audioManager;
 
+        private int secondsOfBreath;
+        private int secondsOfExhale;
+        private BreathParam breathParam;
+
 
         public MainViewModel(IAudioManager audioManager)
         {
@@ -51,6 +55,9 @@ namespace TDA.ViewModels
             IsRunning = false;
             willBeSaved = false;
             _timer = new TimeOnly();
+            breathParam = new BreathParam();
+            breathParam.BreathSec = BreathSec;
+            breathParam.ExhaleSec = ExhaleSec;
         }
 
 
@@ -129,6 +136,20 @@ namespace TDA.ViewModels
             }
         }
 
+        public int SecondsOfBreath
+        {
+            get => secondsOfBreath;
+        }
+        public int SecondsOfExhale
+        {
+            get => secondsOfExhale;
+        }
+
+        public BreathParam BreathParam
+        {
+            get { return breathParam; }
+            set { breathParam = value; OnPropertyChanged(nameof(BreathParam)); }
+        }
 
         public bool IsRunning
         {
@@ -140,6 +161,7 @@ namespace TDA.ViewModels
             }
 
         }
+
 
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged([CallerMemberName] string prop = "")
@@ -173,38 +195,57 @@ namespace TDA.ViewModels
                 willBeSaved=true;
             }
             IsRunning = !IsRunning;
-            if (!IsRunning)
+            var startPlayAudio = audioManager.CreatePlayer(await FileSystem.OpenAppPackageFileAsync("tibip.wav"));
+            var startBreathAudio = audioManager.CreatePlayer(await FileSystem.OpenAppPackageFileAsync("breath.wav"));
+            var startExhaleAudio = audioManager.CreatePlayer(await FileSystem.OpenAppPackageFileAsync("exhale.wav"));
+            try
             {
-               int fullCycles = RemainedTime / (BreathSec + ExhaleSec);
-               int leftOver = RemainedTime - fullCycles;
-                if(leftOver > (BreathSec + ExhaleSec) / 2.0)
+               
+                if (!IsRunning)
                 {
-                    RemainedTime = (fullCycles + 1) * (BreathSec + ExhaleSec);
-                    Cycles = fullCycles + 1;
+                    // pause and round/truncate timer
+                    int fullCycles = RemainedTime / (BreathSec + ExhaleSec);
+                    int leftOver = RemainedTime - fullCycles;
+                    if (leftOver > (BreathSec + ExhaleSec) / 2.0)
+                    {
+                        RemainedTime = (fullCycles + 1) * (BreathSec + ExhaleSec);
+                        Cycles = fullCycles + 1;
+                    }
+                    else
+                    {
+                        RemainedTime = (fullCycles) * (BreathSec + ExhaleSec);
+                        Cycles = fullCycles;
+                    }
+
                 }
                 else
                 {
-                    RemainedTime = (fullCycles) * (BreathSec + ExhaleSec);
-                    Cycles = fullCycles;
+                    // start program
+                    
+                    startPlayAudio.Play();
+                    await Task.Delay(TimeSpan.FromMilliseconds(1500));
+                    // нажал кабан на баклажан
+                    
+
                 }
-               
+                while (IsRunning)
+                {
+
+                    _timer.Add(TimeSpan.FromSeconds(1));
+                    CountDown(startBreathAudio, startExhaleAudio);
+                    await Task.Delay(TimeSpan.FromMilliseconds(1000));
+
+                }
             }
-            else
+            finally
             {
-               var player = audioManager.CreatePlayer(await FileSystem.OpenAppPackageFileAsync("tibip.wav"));
-               player.Play();
-               await Task.Delay(TimeSpan.FromSeconds(1));
-                // нажал кабан на баклажан
+                startPlayAudio.Dispose();
+                startBreathAudio.Dispose();
+                startExhaleAudio.Dispose();
             }
             
-            while (IsRunning)
-            {
-                
-                _timer.Add(TimeSpan.FromSeconds(1));
-                CountDown();
-                await Task.Delay(TimeSpan.FromSeconds(1));
-
-            }
+            
+            
             
         }
 
@@ -215,10 +256,39 @@ namespace TDA.ViewModels
             ResetTimer();
         }
 
-        private void CountDown()
+        private void CountDown(IAudioPlayer startBreathAudio,IAudioPlayer startExhaleAudio)
         {
             if (_remainedTime > 0)
             {
+                int leftOver = _remainedTime % (BreathSec + ExhaleSec);
+                
+                if(leftOver == 0)
+                {
+                    // play start begin breath
+                    startBreathAudio?.Play();
+                }
+                int secondsOfCycle = (BreathSec + ExhaleSec) - leftOver;
+                BreathParam.StadiaSec = secondsOfCycle;
+                if (secondsOfCycle > BreathSec)
+                {
+                    // exhale stadia
+                    secondsOfBreath = BreathSec;
+                    secondsOfExhale = secondsOfCycle - BreathSec;
+                }
+                else
+                {
+                    // breath statia
+                    secondsOfBreath = secondsOfCycle;
+                    secondsOfExhale = 0;
+                }
+                if(secondsOfBreath == BreathSec && secondsOfExhale == 0)
+                {
+                    //play start exhale
+                    startExhaleAudio?.Play();
+                }
+                OnPropertyChanged(nameof(SecondsOfBreath));
+                OnPropertyChanged(nameof(SecondsOfExhale));
+                OnPropertyChanged(nameof(BreathParam));
                 _remainedTime--;
                 OnPropertyChanged(nameof(RemainedTime));
             }

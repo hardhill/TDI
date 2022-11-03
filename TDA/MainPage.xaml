@@ -11,6 +11,7 @@
         <vm:SecundaConverter x:Key="SecundaConverter"/>
         <vm:BoolInversConverter x:Key="BoolInversConverter"/>
         <vm:SourceButtonConverter x:Key="SourceButtonConverter"/>
+        <vm:SecundaSizeConverter x:Key="Seconda2Size"/>
     </ContentPage.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -76,7 +77,7 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <Ellipse Grid.Column="1" WidthRequest="200" HeightRequest="200" Stroke="Black" StrokeThickness="2" Fill="#78E258"/>
-            <Ellipse Grid.Column="1" WidthRequest="100" HeightRequest="100" Stroke="Black" StrokeThickness="2" Fill="#2DFCFC"/>
+            <Ellipse Grid.Column="1" WidthRequest="{Binding BreathParam, Converter={StaticResource Seconda2Size}, ConverterParameter=200}" HeightRequest="{Binding BreathParam, Converter={StaticResource Seconda2Size },ConverterParameter=200}" Stroke="Black" StrokeThickness="2" Fill="#2DFCFC"/>
         </Grid>
     </Grid>
 
