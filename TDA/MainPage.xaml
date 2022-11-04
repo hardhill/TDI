@@ -68,15 +68,23 @@
                          Padding="5"
                          />
         </Grid>
-        <Grid Grid.Row="7">
+        <Grid Grid.Row="7" HorizontalOptions="Center">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="28"/>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="28"/>
             </Grid.ColumnDefinitions>
-            <Ellipse Grid.Column="1" WidthRequest="200" HeightRequest="200" Stroke="Black" StrokeThickness="2" Fill="#78E258">
-                
-            </Ellipse>
+            <ImageButton Source="{Binding CurrentVolume.Name}" WidthRequest="28" HeightRequest="28"  VerticalOptions="Start" Command="{Binding SetVolumeCommand}"/>
+            <Ellipse Grid.Column="1" 
+                     VerticalOptions="Start"
+                     HorizontalOptions="Center"
+                     MinimumWidthRequest="100"
+                     MinimumHeightRequest="100"
+                     MaximumHeightRequest="200"
+                     
+                     Stroke="Black" StrokeThickness="2" Fill="#0062BF"/>
+
+
             <!--
             <Ellipse Grid.Column="1" 
                      WidthRequest="{Binding BreathParam, Converter={StaticResource Seconda2Size}, ConverterParameter=200}" 
@@ -86,8 +94,12 @@
             </Ellipse>
             -->
             <Ellipse x:Name="myEllipse" Grid.Column="1" 
-                     WidthRequest="200" 
-                     HeightRequest="200" 
+                     VerticalOptions="Start"
+                     HorizontalOptions="Center"
+                     MinimumWidthRequest="100"
+                     MinimumHeightRequest="100"
+                     MaximumHeightRequest="200"
+                     MaximumWidthRequest="200"
                      Fill="#2DFCFC"
                      Scale="0.1"
                      >

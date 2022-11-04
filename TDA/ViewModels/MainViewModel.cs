@@ -1,15 +1,8 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using Microsoft.Maui.Controls;
+﻿using CommunityToolkit.Mvvm.Input;
 using Microsoft.Maui.Controls.Shapes;
 using Plugin.Maui.Audio;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TDA.ViewModels
 {
@@ -38,6 +31,8 @@ namespace TDA.ViewModels
 
         private int secondsOfBreath;
         private int secondsOfExhale;
+        private VolumeName volumeName;
+        private Volumes volumes;
 
 
 
@@ -58,6 +53,8 @@ namespace TDA.ViewModels
             IsRunning = false;
             willBeSaved = false;
             _timer = new TimeOnly();
+            volumes = new Volumes();
+            volumeName = volumes.GetVolume(3);
             myEllipse = ellipse;
         }
 
@@ -157,7 +154,11 @@ namespace TDA.ViewModels
 
         }
 
-
+        public VolumeName CurrentVolume
+        {
+            get { return volumeName; }
+            set { volumeName = value; OnPropertyChanged(nameof(CurrentVolume)); }
+        }
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged([CallerMemberName] string prop = "")
         {
@@ -193,6 +194,9 @@ namespace TDA.ViewModels
             var startPlayAudio = audioManager.CreatePlayer(await FileSystem.OpenAppPackageFileAsync("tibip.wav"));
             var startBreathAudio = audioManager.CreatePlayer(await FileSystem.OpenAppPackageFileAsync("breath.wav"));
             var startExhaleAudio = audioManager.CreatePlayer(await FileSystem.OpenAppPackageFileAsync("exhale.wav"));
+            startPlayAudio.Volume = CurrentVolume.Volume;
+            startBreathAudio.Volume = CurrentVolume.Volume;
+            startExhaleAudio.Volume = CurrentVolume.Volume;
             try
             {
                
@@ -211,7 +215,8 @@ namespace TDA.ViewModels
                         RemainedTime = (fullCycles) * (BreathSec + ExhaleSec);
                         Cycles = fullCycles;
                     }
-
+                    myEllipse.CancelAnimations();
+                    myEllipse.Scale = 0.1;
                 }
                 else
                 {
@@ -226,6 +231,8 @@ namespace TDA.ViewModels
                 while (IsRunning)
                 {
                     _timer.Add(TimeSpan.FromSeconds(1));
+                    startBreathAudio.Volume = CurrentVolume.Volume;
+                    startExhaleAudio.Volume = CurrentVolume.Volume;
                     CountDown(startBreathAudio, startExhaleAudio);
                     await Task.Delay(TimeSpan.FromMilliseconds(1000));
                 }
@@ -245,6 +252,12 @@ namespace TDA.ViewModels
             ResetTimer();
         }
 
+        [RelayCommand]
+        public void SetVolume()
+        {
+           CurrentVolume =  volumes.NextValume(CurrentVolume.Id);
+            
+        }
         private void CountDown(IAudioPlayer startBreathAudio,IAudioPlayer startExhaleAudio)
         {
             if (_remainedTime > 0)
