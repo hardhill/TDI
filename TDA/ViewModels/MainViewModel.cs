@@ -3,6 +3,7 @@ using Microsoft.Maui.Controls.Shapes;
 using Plugin.Maui.Audio;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using TDA.Data;
 
 namespace TDA.ViewModels
 {
@@ -33,29 +34,32 @@ namespace TDA.ViewModels
         private int secondsOfExhale;
         private VolumeName volumeName;
         private Volumes volumes;
+        private StoreData storeData;
 
 
 
         public MainViewModel(IAudioManager audioManager, Ellipse ellipse)
         {
             this.audioManager = audioManager;
+            storeData = LoadUserData();
             MinCycles = 1;
-            Cycles = 20;
+            Cycles = storeData.Cycles;
             MaxCycles = 200;
 
             MinBreathSec = 1;
-            BreathSec = 3;
+            BreathSec = storeData.BreathSec;
             MaxBreathSec = 6;
             
             MinExhaleSec = 5;
             MaxExhaleSec = 180;
-            ExhaleSec = 10;
+            ExhaleSec = storeData.ExhaleSec;
             IsRunning = false;
             willBeSaved = false;
             _timer = new TimeOnly();
             volumes = new Volumes();
-            volumeName = volumes.GetVolume(3);
+            volumeName = volumes.GetVolume(storeData.VolumeId);
             myEllipse = ellipse;
+            DeviceDisplay.Current.KeepScreenOn = true;
         }
 
 
@@ -179,6 +183,64 @@ namespace TDA.ViewModels
             willBeSaved = false;
         }
 
+        private void StoreUserData(StoreData storeData)
+        {
+            if (storeData == null) return;
+            string pathData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            if (pathData == null) return;
+            string fileName = System.IO.Path.Combine(pathData, "tdf.data");
+            try
+            {
+                using (FileStream fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+                using (BinaryWriter bw = new BinaryWriter(fs))
+                {
+                    bw.Write(storeData.Cycles);
+                    bw.Write(storeData.BreathSec);
+                    bw.Write(storeData.ExhaleSec);
+                    bw.Write(storeData.VolumeId);
+                    bw.Flush();
+                    bw.Close();
+                    fs.Close();
+                }
+            }
+            catch (Exception)
+            {
+
+            }
+        }
+
+        private StoreData LoadUserData()
+        {
+            StoreData storeData = new StoreData(20,3,10,3);
+            string pathData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            if (pathData != null)
+            {
+                string fileName = System.IO.Path.Combine(pathData, "tdf.data");
+                if(File.Exists(fileName))
+                {
+                    try
+                    {
+                        using (FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read))
+                        using (BinaryReader br = new BinaryReader(fs))
+                        {
+                            fs.Position = 0;
+                            storeData.Cycles = br.ReadInt32();
+                            storeData.BreathSec = br.ReadInt32();
+                            storeData.ExhaleSec = br.ReadInt32();
+                            storeData.VolumeId = br.ReadInt32();
+                            fs.Close();
+                        }
+                    }
+                    catch (Exception)
+                    {
+
+                        
+                    }
+                }
+            }
+            return storeData;
+        }
+
         // start breath
         [RelayCommand]
         public async void StartBreath()
@@ -188,6 +250,7 @@ namespace TDA.ViewModels
                 storeCycles = Cycles;
                 storeBreath = BreathSec;
                 storeExhale = ExhaleSec;
+                
                 willBeSaved=true;
             }
             IsRunning = !IsRunning;
@@ -221,10 +284,11 @@ namespace TDA.ViewModels
                 else
                 {
                     // start program
-                    
+                    StoreUserData(new StoreData(Cycles, BreathSec, ExhaleSec, CurrentVolume.Id));
                     startPlayAudio.Play();
                     await Task.Delay(TimeSpan.FromMilliseconds(1500));
                     // нажал кабан на баклажан
+                    // нажалкаб ан набак лажан
                     
 
                 }
